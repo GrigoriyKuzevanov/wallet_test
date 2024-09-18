@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
+    DB_PORT: str
     DB_NAME: str
     ECHO_SQL: bool
 
@@ -18,6 +19,7 @@ class Settings(BaseSettings):
             username=self.DB_USER,
             password=self.DB_PASSWORD,
             host=self.DB_HOST,
+            port=self.DB_PORT,
             path=self.DB_NAME,
         )
 
