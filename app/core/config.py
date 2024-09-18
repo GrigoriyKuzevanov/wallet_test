@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_HOST: str
     DB_NAME: str
+    ECHO_SQL: bool
 
     @computed_field
     @property
