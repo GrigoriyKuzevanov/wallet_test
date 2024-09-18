@@ -1,6 +1,6 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -19,9 +19,10 @@ class Settings(BaseSettings):
             host=self.DB_HOST,
             path=self.DB_NAME,
         )
-        
-    model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, case_sensitive=True)
-    
-    
+
+    model_config = SettingsConfigDict(
+        env_file=".env", env_ignore_empty=True, case_sensitive=True
+    )
+
+
 settings = Settings()
-    

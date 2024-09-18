@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:14
+    restart: always
+    ports:
+      - 5431:5432
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - wallet-db:/var/lib/postgresql/data
+
+
+volumes:
+  wallet-db:
