@@ -6,6 +6,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import models, schemas
 
 
+async def create_wallet(
+    session: AsyncSession, wallet: schemas.WalletCreate
+) -> models.Wallet:
+    db_wallet = models.Wallet(**wallet.model_dump())
+
+    session.add(db_wallet)
+    await session.commit()
+    await session.refresh(db_wallet)
+
+    return db_wallet
+
+
 async def read_wallet_by_uuid(
     session: AsyncSession, wallet_uuid: uuid.UUID
 ) -> models.Wallet | None:

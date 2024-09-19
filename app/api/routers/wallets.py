@@ -14,6 +14,15 @@ router = APIRouter(
 )
 
 
+@router.post("/", response_model=schemas.WalletBase)
+async def post_wallet(
+    wallet: schemas.WalletCreate, session: AsyncSession = Depends(get_db)
+):
+    db_wallet = await crud.create_wallet(session=session, wallet=wallet)
+    print(db_wallet)
+    return db_wallet
+
+
 @router.get("/{wallet_uuid}", response_model=schemas.WalletBase)
 async def get_wallet(wallet_uuid: uuid.UUID, session: AsyncSession = Depends(get_db)):
     db_wallet = await crud.read_wallet_by_uuid(session=session, wallet_uuid=wallet_uuid)

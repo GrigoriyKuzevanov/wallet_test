@@ -19,3 +19,7 @@ class WalletBase(BaseModel):
 class WalletUpdate(BaseModel):
     operationType: WalletOperationChoices
     amount: int
+
+
+class WalletCreate(BaseModel):
+    balance: int
