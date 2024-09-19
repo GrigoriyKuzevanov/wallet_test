@@ -24,6 +24,21 @@ class Settings(BaseSettings):
             path=self.DB_NAME,
         )
 
+    TEST_DB_NAME: str
+    TEST_DB_PORT: int
+    
+    @computed_field
+    @property
+    def asyncpg_test_url(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql+asyncpg",
+            username=self.DB_USER,
+            password=self.DB_PASSWORD,
+            host=self.DB_HOST,
+            port=self.TEST_DB_PORT,
+            path=self.TEST_DB_NAME,    
+        )
+    
     model_config = SettingsConfigDict(
         env_file=".env", env_ignore_empty=True, case_sensitive=True
     )

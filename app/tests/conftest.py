@@ -5,25 +5,29 @@ from typing import AsyncGenerator
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
 
 from app import models
 from app.core.config import settings
-from app.core.database import Base, engine, get_db
+from app.core.database import Base, get_db
 from app.main import app
 
+testing_engine = create_async_engine(settings.asyncpg_test_url.unicode_string())
+
+
 TestingAsyncSession = async_sessionmaker(
-    engine, autoflush=False, expire_on_commit=False
+    testing_engine, autoflush=False, expire_on_commit=False
 )
 
 
 @pytest_asyncio.fixture(scope="session")
 async def start_db() -> None:
-    async with engine.begin() as conn:
+    async with testing_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
-    await engine.dispose()
+    await testing_engine.dispose()
 
 
 @pytest_asyncio.fixture(scope="function")
