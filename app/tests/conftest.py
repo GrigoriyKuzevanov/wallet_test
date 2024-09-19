@@ -1,3 +1,5 @@
+import asyncio
+import uuid
 from collections.abc import AsyncGenerator
 from typing import AsyncGenerator
 
@@ -15,13 +17,13 @@ TestingAsyncSession = async_sessionmaker(
 )
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="function")
 async def session() -> AsyncGenerator:
     async with TestingAsyncSession() as testing_session:
         yield testing_session
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="function")
 async def client() -> AsyncGenerator[AsyncClient, None]:
     async def override_get_db():
         async with TestingAsyncSession() as testing_session:
@@ -35,10 +37,10 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
         yield client
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="function")
 async def test_wallet(session: AsyncSession) -> models.Wallet:
     wallet_data = {
-        "id": "0b404911-c9bd-46e6-bbc3-03b90b39b1d5",
+        "id": str(uuid.uuid4()),
         "balance": 1000,
     }
 
@@ -48,3 +50,11 @@ async def test_wallet(session: AsyncSession) -> models.Wallet:
     await session.refresh(wallet)
 
     return wallet
+
+
+@pytest_asyncio.fixture(scope="session")
+def event_loop():
+    policy = asyncio.get_event_loop_policy()
+    loop = policy.new_event_loop()
+    yield loop
+    loop.close()
