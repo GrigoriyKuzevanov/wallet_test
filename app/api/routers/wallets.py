@@ -38,7 +38,7 @@ async def update_wallet(
     if not db_wallet:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Wallet with given uuid doen not exist",
+            detail="Wallet with given uuid does not exist",
         )
 
     too_low_balance_exc = HTTPException(

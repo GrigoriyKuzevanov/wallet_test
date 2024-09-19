@@ -95,4 +95,4 @@ async def test_update_wallet_not_exists(client: AsyncClient) -> None:
     response = await client.put(f"/wallets/{random_uuid}/operation", json=deposit_data)
 
     assert response.status_code == 404
-    assert response.json().get("detail") == "Wallet with given uuid doen not exist"
+    assert response.json().get("detail") == "Wallet with given uuid does not exist"
