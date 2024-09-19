@@ -1,9 +1,12 @@
-from fastapi import Depends
+import uuid
+
+from fastapi import Depends, HTTPException, status
 from fastapi.routing import APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+
+from app import models, schemas
+from app.api import crud
 from app.core.database import get_db
-from app import models
 
 router = APIRouter(
     prefix="/wallets",
@@ -11,9 +14,14 @@ router = APIRouter(
 )
 
 
-@router.get("/")
-async def get_wallet(session: AsyncSession = Depends(get_db)):
-    stmt = select(models.Wallet)
-    result = await session.execute(stmt)
-    wallets = result.scalars().all()
-    return {"wallets": wallets}
+@router.get("/{wallet_uuid}", response_model=schemas.WalletBase)
+async def get_wallet(wallet_uuid: uuid.UUID, session: AsyncSession = Depends(get_db)):
+    db_wallet = await crud.read_wallet_by_uuid(session=session, wallet_uuid=wallet_uuid)
+
+    if not db_wallet:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wallet with given uuid doen not exist",
+        )
+
+    return db_wallet
