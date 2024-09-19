@@ -1,5 +1,11 @@
 import uuid
 from pydantic import BaseModel
+from enum import Enum
+
+
+class WalletOperationChoices(Enum):
+    DEPOSIT = "DEPOSIT"
+    WITHDRAW = "WITHDRAW"
 
 
 class WalletBase(BaseModel):
@@ -8,3 +14,8 @@ class WalletBase(BaseModel):
     
     class Config:
         from_attributes = True
+        
+        
+class WalletUpdate(BaseModel):
+    operation_type: WalletOperationChoices
+    amount: int
