@@ -9,12 +9,21 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app import models
 from app.core.config import settings
-from app.core.database import engine, get_db
+from app.core.database import Base, engine, get_db
 from app.main import app
 
 TestingAsyncSession = async_sessionmaker(
     engine, autoflush=False, expire_on_commit=False
 )
+
+
+@pytest_asyncio.fixture(scope="session")
+async def start_db() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
+    await engine.dispose()
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -23,8 +32,8 @@ async def session() -> AsyncGenerator:
         yield testing_session
 
 
-@pytest_asyncio.fixture(scope="function")
-async def client() -> AsyncGenerator[AsyncClient, None]:
+@pytest_asyncio.fixture(scope="session")
+async def client(start_db) -> AsyncGenerator[AsyncClient, None]:
     async def override_get_db():
         async with TestingAsyncSession() as testing_session:
             yield testing_session
