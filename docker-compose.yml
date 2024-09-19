@@ -1,4 +1,16 @@
 services:
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+      db-test:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+
   db:
     image: postgres:14
     restart: always
@@ -10,6 +22,12 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
     volumes:
       - wallet-db:/var/lib/postgresql/data
 
@@ -24,6 +42,12 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${TEST_DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
 
 
 volumes:

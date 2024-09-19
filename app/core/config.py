@@ -25,6 +25,7 @@ class Settings(BaseSettings):
         )
 
     TEST_DB_NAME: str
+    TEST_DB_HOST: str
     TEST_DB_PORT: int
     
     @computed_field
@@ -34,7 +35,7 @@ class Settings(BaseSettings):
             scheme="postgresql+asyncpg",
             username=self.DB_USER,
             password=self.DB_PASSWORD,
-            host=self.DB_HOST,
+            host=self.TEST_DB_HOST,
             port=self.TEST_DB_PORT,
             path=self.TEST_DB_NAME,    
         )
