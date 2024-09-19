@@ -17,5 +17,5 @@ class WalletBase(BaseModel):
         
         
 class WalletUpdate(BaseModel):
-    operation_type: WalletOperationChoices
+    operationType: WalletOperationChoices
     amount: int

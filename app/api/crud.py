@@ -18,7 +18,6 @@ async def deposit_wallet(
     session: AsyncSession, db_wallet: models.Wallet, amount: int
 ) -> models.Wallet:
     db_wallet.balance += amount
-    print(db_wallet.balance)
     await session.commit()
     await session.refresh(db_wallet)
 
@@ -29,6 +28,27 @@ async def withdraw_wallet(
     session: AsyncSession, db_wallet: models.Wallet, amount: int
 ) -> models.Wallet:
     db_wallet.balance -= amount
+    await session.commit()
+    await session.refresh(db_wallet)
+
+    return db_wallet
+
+
+async def change_balance(
+    session: AsyncSession,
+    db_wallet: models.Wallet,
+    update_data: schemas.WalletUpdate,
+    too_low_balance_exc: Exception,
+) -> models.Wallet:
+    if update_data.operationType.name == "DEPOSIT":
+        db_wallet.balance += update_data.amount
+
+    if update_data.operationType.name == "WITHDRAW":
+        db_wallet.balance -= update_data.amount
+
+        if db_wallet.balance < 0:
+            raise too_low_balance_exc
+
     await session.commit()
     await session.refresh(db_wallet)
 

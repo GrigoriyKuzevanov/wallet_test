@@ -41,21 +41,16 @@ async def update_wallet(
             detail="Wallet with given uuid doen not exist",
         )
 
-    if update_schema.operation_type.name == "DEPOSIT":
-        db_wallet = await crud.deposit_wallet(
-            session=session, db_wallet=db_wallet, amount=update_schema.amount
-        )
+    too_low_balance_exc = HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=f"Your balance is too low: {db_wallet.balance}",
+    )
 
-    if update_schema.operation_type.name == "WITHDRAW":
-
-        if update_schema.amount > db_wallet.balance:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Too low balance: {db_wallet.balance}",
-            )
-
-        db_wallet = await crud.withdraw_wallet(
-            session=session, db_wallet=db_wallet, amount=update_schema.amount
-        )
+    db_wallet = await crud.change_balance(
+        session=session,
+        db_wallet=db_wallet,
+        update_data=update_schema,
+        too_low_balance_exc=too_low_balance_exc,
+    )
 
     return db_wallet
