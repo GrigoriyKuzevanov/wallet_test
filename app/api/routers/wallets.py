@@ -30,7 +30,7 @@ async def get_wallet(wallet_uuid: uuid.UUID, session: AsyncSession = Depends(get
     if not db_wallet:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Wallet with given uuid doen not exist",
+            detail="Wallet with given uuid does not exist",
         )
 
     return db_wallet
