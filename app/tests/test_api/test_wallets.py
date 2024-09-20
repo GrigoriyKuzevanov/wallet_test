@@ -8,6 +8,20 @@ from app import models, schemas
 
 
 @pytest.mark.asyncio
+async def test_post_wallet(client: AsyncClient) -> None:
+    post_data = {
+        "balance": 1000,
+    }
+    response = await client.post("/wallets/", json=post_data)
+
+    assert response.status_code == 200
+
+    wallet = schemas.WalletBase(**response.json())
+
+    assert wallet.balance == post_data.get("balance")
+
+
+@pytest.mark.asyncio
 async def test_get_wallet(client: AsyncClient, test_wallet: models.Wallet) -> None:
     response = await client.get(f"/wallets/{test_wallet.id}")
 
