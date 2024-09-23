@@ -22,7 +22,7 @@ API приложение, построенное с использованием
 ## Установка приложения
 Клонировать гит репозиторий на свою машину:
 ```
-git clone git@github.com:GrigoriyKuzevanov/wallet_test.git
+git clone https://github.com/GrigoriyKuzevanov/wallet_test.git
 ```
 В директории проекта создать файл .env, в которм необходимо указать следующие переменные:
 ```
